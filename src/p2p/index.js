@@ -23,9 +23,8 @@ export const connectToPeers = (newPeers) => {
             console.log('Connection received to peer: ', peer);
             initConnection(ws);
         });
-        ws.on('error', (e) => {
+        ws.on('error', () => {
             console.log('Connection failed to peer: ', peer);
-            console.error(e);
         });
     });
 };
