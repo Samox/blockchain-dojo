@@ -1,4 +1,4 @@
-import { calcHash, isNewBlockValid } from './block';
+import { isNewBlockValid } from './block';
 
 const Chain = (function () { // eslint-disable-line func-names
     let instance;
@@ -7,18 +7,27 @@ const Chain = (function () { // eslint-disable-line func-names
         timestamp: 0,
         data: 'Hello Blockchain!',
         prevHash: 0,
-        hash: calcHash({
-            index: 0,
-            prevHash: 0,
-            timestamp: 0,
-            data: 'Hello Blockchain!'
-        })
+        hash: 0,
     };
-    const chain = [origin];
+    let chain = [origin];
 
     function isChainValid(newChain) {
         let isValid = true;
-        // TODO compute isValid
+        if (JSON.stringify(newChain[0]) !== JSON.stringify(origin)) {
+            console.log('Received chain is invalid. Origin block does not coincide');
+            isValid = false;
+            return isValid;
+        }
+
+        const tempChain = [newChain[0]];
+        for (let i = 1; i < newChain.length; i += 1) {
+            if ((0, _block.isNewBlockValid)(newChain[i], tempChain[i - 1])) {
+                tempChain.push(newChain[i]);
+            } else {
+                isValid = false;
+                return isValid;
+            }
+        }
         return isValid;
     }
 
@@ -27,7 +36,7 @@ const Chain = (function () { // eslint-disable-line func-names
     }
 
     function update(block) {
-        // TODO update chain
+        chain.push(block)
     }
 
     function last() {
@@ -35,7 +44,7 @@ const Chain = (function () { // eslint-disable-line func-names
     }
 
     function replace(newChain) {
-        // TODO replace new chain
+        chain = newChain;
     }
 
     function create() {
